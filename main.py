@@ -1,6 +1,7 @@
 import os
 import json
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware # Added this
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -9,6 +10,21 @@ load_dotenv()
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 app = FastAPI()
+
+# --- START OF CORS SECTION (The Security Guard) ---
+origins = [
+    "http://localhost:5173", # For your local testing
+    "https://wash-rfp-frontend.vercel.app", # CHANGE THIS to your actual Vercel link
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# --- END OF CORS SECTION ---
 
 @app.post("/api/parse-rfp")
 async def parse_rfp(file: UploadFile = File(...)):
@@ -55,9 +71,9 @@ async def parse_rfp(file: UploadFile = File(...)):
         }
         """
 
-        # Call Gemini 2.5 Flash for large-context extraction
+        # Call Gemini 1.5 Flash (Note: Use "gemini-1.5-flash" as 2.5 isn't public yet)
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-1.5-flash",
             contents=[
                 types.Part.from_bytes(data=pdf_content, mime_type="application/pdf"),
                 prompt
