@@ -11,10 +11,10 @@ client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 app = FastAPI()
 
-# --- START OF CORS SECTION (The Security Guard) ---
+# --- Configuration for cross-origin requests ---
 origins = [
-    "http://localhost:5173", # For your local testing
-    "https://wash-rfp-frontend.vercel.app", # CHANGE THIS to your actual Vercel link
+    "http://localhost:5173", 
+    "https://wash-rfp-frontend.vercel.app", 
 ]
 
 app.add_middleware(
@@ -24,14 +24,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# --- END OF CORS SECTION ---
+
 
 @app.post("/api/parse-rfp")
 async def parse_rfp(file: UploadFile = File(...)):
     try:
         pdf_content = await file.read()
 
-        # Prompt Engineering template
+        # Prompt template
         prompt = """
         You are an expert bid manager. Analyze this tender document and extract the critical project data.
         You MUST return a valid JSON object that STRICTLY follows this exact structure and keys. 
@@ -71,7 +71,7 @@ async def parse_rfp(file: UploadFile = File(...)):
         }
         """
 
-        # Call Gemini 1.5 Flash (Note: Use "gemini-1.5-flash" as 2.5 isn't public yet)
+        # Call Gemini 1.5 Flash 
         response = client.models.generate_content(
             model="gemini-1.5-flash",
             contents=[
@@ -83,9 +83,7 @@ async def parse_rfp(file: UploadFile = File(...)):
             )
         )
 
-        extracted_data = json.loads(response.text)
-
-        # Nest the result under a "data" key so the frontend can read it safely
+        extracted_data = json.loads(response.text)       
         return {"success": True, "data": extracted_data}
 
     except Exception as e:
