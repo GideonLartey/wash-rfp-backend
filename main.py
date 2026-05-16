@@ -49,7 +49,7 @@ async def parse_rfp(file: UploadFile = File(...)):
         """
 
         response = client.models.generate_content(
-            model="gemini-1.5-flash",
+            model="gemini-2.5-flash",
             contents=[
                 types.Part.from_bytes(data=pdf_content, mime_type="application/pdf"),
                 prompt
