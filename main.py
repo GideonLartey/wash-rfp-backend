@@ -1,7 +1,7 @@
 import os
 import json
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.middleware.cors import CORSMiddleware # Added this
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -11,9 +11,8 @@ client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 app = FastAPI()
 
-# --- Configuration for cross-origin requests ---
 origins = [
-    "http://localhost:5173", 
+    "http://localhost:5173",
     "https://wash-rfp-frontend.vercel.app", 
 ]
 
@@ -25,53 +24,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.post("/api/parse-rfp")
 async def parse_rfp(file: UploadFile = File(...)):
+    """
+    High-speed endpoint designed to extract core tender data 
+    well within server timeout thresholds.
+    """
     try:
         pdf_content = await file.read()
 
-        # Prompt template
+        # Streamlined prompt optimized for speed and low token generation time
         prompt = """
-        You are an expert bid manager. Analyze this tender document and extract the critical project data.
-        You MUST return a valid JSON object that STRICTLY follows this exact structure and keys. 
-        If a detail is not found in the document, write "Not specified".
-
+        Analyze this document and extract the core metadata.
+        Return a valid JSON object strictly matching this schema:
         {
           "project_metadata": {
-            "title": "Full name of the project",
-            "donor": "Funding agency",
-            "reference_number": "Tender or RFP code",
-            "closing_date": "Submission deadline",
-            "submission_email": "Where to send the bid"
-          },
-          "technical_scope": {
-            "summary": "Brief 2-sentence overview",
-            "locations": ["List of regions, districts, or provinces"],
-            "key_activities": ["List of physical works or services, e.g., boreholes, latrines"],
-            "environmental_goals": "Any climate, greening, or sustainability requirements"
-          },
-          "financial_and_contractual": {
-            "budget_estimate": "Total value if mentioned",
-            "overhead_cap": "Limits on indirect costs or admin fees",
-            "payment_schedule": [
-              {"milestone": "Name of deliverable", "percentage": "% of payment"}
-            ],
-            "duration_or_phases": "Project timeline or distinct phases"
-          },
-          "evaluation_rubric": {
-            "technical_weight": "Percentage weight for technical score",
-            "financial_weight": "Percentage weight for financial score",
-            "key_criteria": ["Main points they will grade the proposal on"]
-          },
-          "compliance_and_safeguarding": {
-            "mandatory_certifications_or_plans": ["e.g., ESMP, Health and Safety Plan"],
-            "safeguarding_rules": ["e.g., gender equality, child protection rules"]
+            "title": "Project name or title",
+            "donor": "Funding agency or donor name",
+            "reference_number": "Tender reference code",
+            "closing_date": "Submission deadline date",
+            "submission_email": "Contact or submission email address"
           }
         }
         """
 
-        # Call Gemini 1.5 Flash 
         response = client.models.generate_content(
             model="gemini-1.5-flash",
             contents=[
@@ -83,9 +59,9 @@ async def parse_rfp(file: UploadFile = File(...)):
             )
         )
 
-        extracted_data = json.loads(response.text)       
+        extracted_data = json.loads(response.text)
         return {"success": True, "data": extracted_data}
 
     except Exception as e:
-        print(f"Error occurred: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Extraction Error: {e}")
+        raise HTTPException(status_code=500, detail="Document processing failed")
