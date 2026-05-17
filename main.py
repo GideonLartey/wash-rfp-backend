@@ -14,6 +14,7 @@ app = FastAPI()
 origins = [
     "http://localhost:5173",
     "https://wash-rfp-frontend.vercel.app", 
+    "https://wash-rfp.vercel.app", 
 ]
 
 app.add_middleware(
@@ -34,6 +35,7 @@ async def parse_rfp(file: UploadFile = File(...)):
         pdf_content = await file.read()
 
         # Streamlined prompt optimized for speed and low token generation time
+        # Now expanded to capture comprehensive WASH program parameters
         prompt = """
         Analyze this document and extract the core metadata.
         Return a valid JSON object strictly matching this schema:
@@ -43,7 +45,12 @@ async def parse_rfp(file: UploadFile = File(...)):
             "donor": "Funding agency or donor name",
             "reference_number": "Tender reference code",
             "closing_date": "Submission deadline date",
-            "submission_email": "Contact or submission email address"
+            "submission_email": "Contact or submission email address",
+            "contract_value": "Total budget, grant ceiling, or contract amount (e.g., $10,000,000)",
+            "project_duration": "Duration of the project (e.g., 24 months, 5 years)",
+            "eligibility_criteria": "Brief summary of who is eligible to apply",
+            "target_demographics": "The specific populations, communities, or regions targeted",
+            "key_deliverables": "A short summary of the main deliverables, outcomes, or outputs"
           }
         }
         """
