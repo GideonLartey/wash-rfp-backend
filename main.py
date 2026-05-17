@@ -11,6 +11,10 @@ client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 app = FastAPI()
 
+@app.get("/")
+async def root():
+    return {"status": "online", "message": "OpenWSH Extraction API is running."}
+
 origins = [
     "http://localhost:5173",
     "https://wash-rfp-frontend.vercel.app", 
