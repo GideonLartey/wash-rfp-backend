@@ -14,27 +14,22 @@ client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 app = FastAPI()
 
-# ---CORE APPMETADATA & ONLINE CHECK ---
+# --- 1. CORE APP METADATA & ALIVE CHECK ---
 @app.get("/")
 async def root():
     return {"status": "online", "message": "OpenWSH Extraction API is running."}
 
-# --- SECURITY & CORS CONFIGURATION ---
-origins = [
-    "http://localhost:5173",
-    "https://wash-rfp-frontend.vercel.app", 
-    "https://wash-rfp.vercel.app", 
-]
-
+# --- 2. SECURITY & CORS CONFIGURATION ---
+# Open wildcard to ensure Vercel frontend can always connect
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=["*"], 
+    allow_credentials=False, 
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# --- LIVE DATA API ENRICHMENT ENGINE ---
+# --- 3. LIVE DATA API ENRICHMENT ENGINE ---
 class CountryContext(BaseModel):
     country: str
     water_stress_index: float
@@ -44,43 +39,37 @@ class CountryContext(BaseModel):
 
 @app.get("/api/context/{country_name}", response_model=CountryContext)
 async def get_live_country_context(country_name: str):
-    """
-    Simulates fetching live context data from the World Bank / WHO JMP databases.
-    Ensures structural integrity for demonstration environments.
-    """
     target = country_name.lower().strip()
     
-    # Empirical Baseline Database
     db = {
         "mali": {"water_stress": 82.4, "governance": 35, "risk": "Drought", "infra": 42},
         "kenya": {"water_stress": 64.1, "governance": 52, "risk": "Drought", "infra": 58},
         "uganda": {"water_stress": 45.8, "governance": 48, "risk": "Flood", "infra": 50},
-        "bangladesh": {"water_stress": 31.2, "governance": 45, "risk": "Flood", "infra": 65}
+        "bangladesh": {"water_stress": 31.2, "governance": 45, "risk": "Flood", "infra": 65},
+        "papua new guinea": {"water_stress": 28.5, "governance": 38, "risk": "Flood", "infra": 35}
     }
     
     if target in db:
         data = db[target]
         return CountryContext(
-            country=country_name.capitalize(),
+            country=country_name.title(),
             water_stress_index=data["water_stress"],
             governance_score=data["governance"],
             primary_climate_risk=data["risk"],
             infrastructure_baseline=data["infra"]
         )
     
-    # Algorithmic fallback to support unexpected demo countries gracefully
     return CountryContext(
-        country=country_name.capitalize(),
+        country=country_name.title(),
         water_stress_index=round(random.uniform(30.0, 85.0), 1),
         governance_score=random.randint(30, 70),
         primary_climate_risk=random.choice(["Drought", "Flood", "Cyclonic Storm"]),
         infrastructure_baseline=random.randint(40, 75)
     )
 
-# --- REAL-TIME COLLABORATION MULTIPLAYER HUB ---
+# --- 4. REAL-TIME COLLABORATION MULTIPLAYER HUB ---
 class ConnectionManager:
     def __init__(self):
-        # Maps a workspace/bid ID to active WebSocket connections
         self.active_connections: Dict[str, List[WebSocket]] = {}
 
     async def connect(self, websocket: WebSocket, workspace_id: str):
@@ -96,14 +85,13 @@ class ConnectionManager:
                 del self.active_connections[workspace_id]
 
     async def broadcast(self, message: str, workspace_id: str, sender: WebSocket):
-        """Broadcasts slider movements and actions to all other users in the room."""
         if workspace_id in self.active_connections:
             for connection in self.active_connections[workspace_id]:
                 if connection != sender: 
                     try:
                         await connection.send_text(message)
                     except Exception:
-                        pass # Handle dead connections safely
+                        pass 
 
 manager = ConnectionManager()
 
@@ -112,22 +100,18 @@ async def websocket_endpoint(websocket: WebSocket, workspace_id: str):
     await manager.connect(websocket, workspace_id)
     try:
         while True:
-            # Continuously listens for incoming client state adjustments (json text string)
             data = await websocket.receive_text()
             await manager.broadcast(data, workspace_id, sender=websocket)
     except WebSocketDisconnect:
         manager.disconnect(websocket, workspace_id)
 
-# --- INTELLIGENT AI EXTRACTION ENDPOINT ---
+# --- 5. INTELLIGENT AI EXTRACTION ENDPOINT ---
 @app.post("/api/parse-rfp")
 async def parse_rfp(file: UploadFile = File(...)):
-    """
-    High-speed endpoint designed to extract core tender data 
-    well within server timeout thresholds.
-    """
     try:
         pdf_content = await file.read()
 
+        # THE FIX: Added strict 'primary_country' rule for the pipeline
         prompt = """
         Analyze this document and extract the core metadata.
         Return a valid JSON object strictly matching this schema:
@@ -142,11 +126,13 @@ async def parse_rfp(file: UploadFile = File(...)):
             "project_duration": "Duration of the project (e.g., 24 months, 5 years)",
             "eligibility_criteria": "Brief summary of who is eligible to apply",
             "target_demographics": "The specific populations, communities, or regions targeted",
+            "primary_country": "Extract ONLY the single primary country name where the project takes place (e.g., 'Papua New Guinea', 'Kenya', 'Mali'). DO NOT use abbreviations like PNG. DO NOT include regions or provinces here.",
             "key_deliverables": "A short summary of the main deliverables, outcomes, or outputs"
           }
         }
         """
 
+        # Using async client to prevent WebSocket freezing
         response = await client.aio.models.generate_content(
             model="gemini-2.5-flash",
             contents=[
