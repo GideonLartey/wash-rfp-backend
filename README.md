@@ -11,7 +11,6 @@ The asynchronous, high-speed Python backend engine powering the OpenWSH-CONTROL 
 
 🔗 Live API Gateway: https://wash-ai.onrender.com (or your deployed API gateway URL)
 
-
 ## 🏗️ Core Architecture & Services
 
 The server is built with FastAPI to enable low-latency, asynchronous operations, managing heavy AI processes and state broadcasts smoothly using Python’s native asyncio loop.
@@ -38,7 +37,6 @@ Built on a lightweight native WebSocket connection manager that keeps track of a
 
 Broadcasts user state adjustments across all socket endpoints in a room concurrently within microseconds, maintaining visual synchronization without database overhead.
 
-
 ## 💻 System Requirements
 
 Runtime Environment: Python v3.9 or higher.
@@ -48,7 +46,6 @@ Package Management: pip (Python Package Installer) and virtualenv modules.
 Operating System Support: Linux, macOS, or Windows (with GTK3 runtime binaries configured).
 
 AI Access Credentials: An active Google AI Studio Gemini API key (or alternative LLM integration keys).
-
 
 ## 🚀 Installation & Setup
 
@@ -69,19 +66,19 @@ cd wash-rfp-backend
 python -m venv venv
 
 
-Activate the environment based on your current operating system:
+## Activate the environment based on your current operating system:
 
-## macOS / Linux:
+macOS / Linux:
 
 source venv/bin/activate
 
 
-## Windows (Command Prompt):
+Windows (Command Prompt):
 
 venv\Scripts\activate.bat
 
 
-## Windows (PowerShell):
+Windows (PowerShell):
 
 .\venv\Scripts\Activate.ps1
 
@@ -97,10 +94,10 @@ pip install -r requirements.txt
 
 Create a new file named .env in the root of the wash-rfp-backend directory. Use the provided .env.example as a template:
 
-YOUR_AI_API_KEY=your_AI_api_key_here
+I  used (GOOGLE_API_KEY=your_gemini_api_key_here); you can select any LLM key of your preference
 
 
-Swap the placeholder value with your live authorization token generated from your AI provider
+(Swap the placeholder value with your live authorization token generated from your LLM).
 
 5. Start the Server
 
@@ -115,7 +112,7 @@ The application will launch on http://localhost:8000. You can access the auto-ge
 
 If you are running the backend on a Windows machine and encounter compilation errors related to OS libraries (such as those required by PDF compilers like WeasyPrint), you must install the missing system dependencies.
 
-## Download the unified package gtk3-runtime-3.24.31-2022-01-04-ts-win64 (or a newer stable release of the GTK3 runtime for Windows).
+Download the unified package gtk3-runtime-3.24.31-2022-01-04-ts-win64 (or a newer stable release of the GTK3 runtime for Windows).
 
 Run the installer and proceed with all options left at DEFAULT.
 
@@ -165,13 +162,13 @@ WebSocket
 
 Establishes a long-lived bidirectional streaming socket connection for active workspace syncing.
 
-## 📂 Project Structure
+📂 Project Structure
 
 OpenWsh-Control/
 ├── wash-rfp-backend/
 │   ├── main.py                 # Core API routing, socket states, and AI prompts
 │   ├── requirements.txt        # Backend dependencies list
-│   ├── .env.example            # System secrets (ignored by Git)
+│   ├── .env                    # System secrets (ignored by Git)
 │   └── .gitignore              # Environment configuration template
 ├── wash-rfp-frontend/          # Front-End Web Client
 │   ├── src/
@@ -189,15 +186,18 @@ OpenWsh-Control/
 
 ## 📄 License & Authors
 
-Developer: Gideon Lartey (DeonLondn)
+Lead Architect: Gideon Lartey (DeonLondn)
 
 Last Code Optimization: May 2026
 
-Licensed under the terms of the open-source MIT License — see the root LICENSE file for precise details.
+Licensed under the terms of the open-source MIT License—see the root LICENSE file for precise details.
 
 
 ## ⚖️ Disclaimer
 
 This is an independent systems prototype built strictly for technical demonstration and educational purposes. It is not associated, affiliated, endorsed, or partnered in any way with WaterAid, or any organization, interest, subsidiary, or entity connected to the official WaterAid organization.
+
+
+
 
 
