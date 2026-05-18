@@ -1,2 +1,11 @@
 __pycache__/
 .env
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# OS Generated Files
+.DS_Store
