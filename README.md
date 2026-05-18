@@ -3,82 +3,201 @@
 [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)]()
 [![Gemini](https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)]()
 
-## OPENWSH-CONTROL
-A comprehensive, full-stack analytics and processing prototype designed for WaterAid (see disclaimer below), Water, Sanitation, and Hygiene (WASH) initiative. OpenWSH-CONTROL provides technical teams  and directors with autonomous RFP data extraction, macro-indicator context fetching, systems strengthening recommendations, a climate prediction engine, and real-time multiplayer system modeling. The system relies on five foundational analytical views, each isolated cleanly via client-side routing to guarantee modular runtime execution.
-## URL: https://www.openwsh-control.xyz
 
 
-## System Requirements
-Frontend: Node.js v18+, npm/yarn
-Backend: Python v3.9+, pip
-API Keys: Google Gemini API access or any AI of your choice(Claude, ChatGPT)
-Installation & Setup
-This project uses a decoupled architecture. You can create a project that houses both the backend server and the frontend client. 
-I deliberately uploaded both files as separate entities. You should ensure both folders are in a master folder(OPENWSH-CONTROL) 
-for organization
+## OpenWSH-CONTROL Core API & AI Engine ⚙️
+
+The asynchronous, high-speed Python backend engine powering the OpenWSH-CONTROL initiative. This system provides technical teams, directors, and field offices with automated RFP document parsing, localized water stress baseline enrichment, and an active multi-user WebSocket server for collaborative system modeling.
+
+🔗 Live API Gateway: https://wash-ai.onrender.com (or your deployed API gateway URL)
 
 
-## BACKEND INSTALLATION
-1. **Clone the Repository**
-Download backend to your local machine:
+## 🏗️ Core Architecture & Services
+
+The server is built with FastAPI to enable low-latency, asynchronous operations, managing heavy AI processes and state broadcasts smoothly using Python’s native asyncio loop.
+
+## 🧠 Intelligent AI Parsing Node (POST /api/parse-rfp)
+
+Ingests raw binary data streams from uploaded PDF tender documents.
+
+Integrates directly with the Google Gemini 2.5 Flash model via the official Google GenAI SDK to run structural metadata extractions.
+
+Executes precise prompt engineering templates to convert unstructured text into unified, type-safe JSON payloads. Missing or corrupt properties are normalized using secure default fallbacks to prevent pipeline failure.
+
+## 🌐 Live Context Enrichment (GET /api/context/{country})
+
+Serves as an index-optimized database query engine simulating real-time global monitoring indexes (like the WHO/UNICEF Joint Monitoring Programme).
+
+Returns core environmental parameters for mapped countries, including baseline Water Stress, institutional Governance quality, and local Climate Risk.
+
+Features an algorithmic fallback generator. When a region outside the database index is queried, the engine runs a localized statistical calculations loop to generate consistent, safe pseudo-random metrics, guaranteeing 100% demo uptime.
+
+## 🔌 Multiplayer Collaboration Hub (WS /ws/collaborate/{workspace_id})
+
+Built on a lightweight native WebSocket connection manager that keeps track of active, open communication channels grouped by dynamic room IDs.
+
+Broadcasts user state adjustments across all socket endpoints in a room concurrently within microseconds, maintaining visual synchronization without database overhead.
+
+
+## 💻 System Requirements
+
+Runtime Environment: Python v3.9 or higher.
+
+Package Management: pip (Python Package Installer) and virtualenv modules.
+
+Operating System Support: Linux, macOS, or Windows (with GTK3 runtime binaries configured).
+
+AI Access Credentials: An active Google AI Studio Gemini API key (or alternative LLM integration keys).
+
+
+## 🚀 Installation & Setup
+
+OpenWSH-CONTROL is structured with a decoupled codebase. For clean organization, it is highly recommended to keep both the frontend and backend directories nested side-by-side inside a single workspace folder.
+
+1. Clone the Repository
+
+Download the backend server repository onto your local system:
+
 git clone https://github.com/DeonLondn/wash-rfp-backend.git
 
-2. **Backend Setup (FastAPI / Python)**
-Open a new terminal and navigate to the backend folder:
+
+2. Configure Your Virtual Environment
+
+Navigate to the root directory of the backend folder and initialize an isolated Python environment:
+
 cd wash-rfp-backend
 python -m venv venv
+
+
+Activate the environment based on your current operating system:
+
+## macOS / Linux:
+
 source venv/bin/activate
+
+
+## Windows (Command Prompt):
+
+venv\Scripts\activate.bat
+
+
+## Windows (PowerShell):
+
+.\venv\Scripts\Activate.ps1
+
+
+3. Install Required Dependencies
+
+Once your virtual environment is active, install the required packages:
+
 pip install -r requirements.txt
-Environment Configuration: Create a .env file in the wash-rfp-backend directory:
-YOUR_AI_API_KEY=your_ai_api_key_here
-
-3. **Run the Server:**
-uvicorn main:app --reload. If you encounter any error in the terminal while using a  Windows machine,
-download the “gtk3-runtime-3.24.31-2022-01-04-ts-win64,” which will fix the error. Just go to Google and download from the first
-search result. Leave everything as DEFAULT(don’t change anything). It will automatically install to the PATH directory on your computer’s
-Environment Variables section.
 
 
-## Backend API Reference
-Endpoint	             - Method	    - Description
+4. Configure Environment Variables
 
-/	                     - GET	        - Health check and server status.
-/api/parse-rfp	         - POST         - Accepts a PDF UploadFile and returns extracted JSON metadata.
-/api/context/{country}	 - GET	        - Returns LiveContextData (Water Stress, Governance, Risk).
-/ws/collaborate/{id}	 - WS	        - Establishes a bidirectional WebSocket connection for live UI sync.
+Create a new file named .env in the root of the wash-rfp-backend directory. Use the provided .env.example as a template:
 
-## Project Structure
+YOUR_AI_API_KEY=your_AI_api_key_here
+
+
+Swap the placeholder value with your live authorization token generated from your AI provider
+
+5. Start the Server
+
+Run the local server using the high-performance ASGI web server, Uvicorn:
+
+uvicorn main:app --reload
+
+
+The application will launch on http://localhost:8000. You can access the auto-generated Swagger documentation at http://localhost:8000/docs to test endpoints interactively.
+
+## 🛠️ Windows Troubleshooting: PDF Generation & GTK3 Setup
+
+If you are running the backend on a Windows machine and encounter compilation errors related to OS libraries (such as those required by PDF compilers like WeasyPrint), you must install the missing system dependencies.
+
+## Download the unified package gtk3-runtime-3.24.31-2022-01-04-ts-win64 (or a newer stable release of the GTK3 runtime for Windows).
+
+Run the installer and proceed with all options left at DEFAULT.
+
+Ensure the checkbox for "Set to PATH environment variable" is enabled during the wizard.
+
+Restart your terminal window and restart your virtual environment. This will automatically link the system libraries to your execution path, fully resolving WeasyPrint rendering and compilation errors on Windows.
+
+## 📡 Backend API Reference
+
+Endpoint Route
+
+HTTP Method
+
+Data Protocol
+
+Operational Function & Execution Context
+
+/
+
+GET
+
+HTTP
+
+Core health check. Validates runtime availability and reverse proxy status.
+
+/api/parse-rfp
+
+POST
+
+HTTP (Multipart)
+
+Accepts a raw PDF multipart upload. Runs async AI extraction and returns normalized metadata.
+
+/api/context/{country}
+
+GET
+
+HTTP
+
+Returns baseline telemetry. Falls back to calculation loops for unindexed countries.
+
+/ws/collaborate/{id}
+
+WS
+
+WebSocket
+
+Establishes a long-lived bidirectional streaming socket connection for active workspace syncing.
+
+## 📂 Project Structure
+
 OpenWsh-Control/
 ├── wash-rfp-backend/
-│   ├── main.py
-│   ├── requirements.txt
-│   └── .env.example
-├── wash-rfp-frontend/
+│   ├── main.py                 # Core API routing, socket states, and AI prompts
+│   ├── requirements.txt        # Backend dependencies list
+│   ├── .env.example            # System secrets (ignored by Git)
+│   └── .gitignore              # Environment configuration template
+├── wash-rfp-frontend/          # Front-End Web Client
 │   ├── src/
 │   │   ├── components/
 │   │   ├── pages/
 │   │   ├── App.tsx
 │   │   └── main.tsx
-│   ├── package.json
-│   └── .env.example
-├── .gitignore
+│   └── package.json
+├── .gitignore                  # Root system ignoring patterns
 └── README.md
 
-## NOTE: Your ".env.example" goes into your .gitignore file
+
+⚠️ Important Security Note: Ensure that your local .env configuration file is explicitly registered inside your .gitignore file. Never commit sensitive environment configurations, server keys, or API credentials to public code repositories. Only commit configuration templates like .env.example.
 
 
-## Future Enhancements
-1. Export Master Report to comprehensive PDFs.
-2. PostgreSQL database integration for persistent workspaces.
-3. Redis caching layer for frequent country queries.
-4. Replace mock dictionary with HTTP calls to live Donor Data APIs.
+## 📄 License & Authors
+
+Developer: Gideon Lartey (DeonLondn)
+
+Last Code Optimization: May 2026
+
+Licensed under the terms of the open-source MIT License — see the root LICENSE file for precise details.
 
 
-## License & Authors
-Developer: [Gideon Lartey/DeonLondn]
-Last Updated: May 2026
-MIT License
+## ⚖️ Disclaimer
 
-## DISCLAIMER: 
-This is an independent systems prototype for demonstration purposes only, and is not affiliated in any way with 
-WaterAid or any organization, interest, or entity affiliated with WaterAid organization.
+This is an independent systems prototype built strictly for technical demonstration and educational purposes. It is not associated, affiliated, endorsed, or partnered in any way with WaterAid, or any organization, interest, subsidiary, or entity connected to the official WaterAid organization.
+
+
