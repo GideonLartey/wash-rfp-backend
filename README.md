@@ -11,6 +11,8 @@ The asynchronous, high-speed Python backend engine powering the OpenWSH-CONTROL 
 
 🔗 Live API Gateway: https://wash-ai.onrender.com (or your deployed API gateway URL)
 
+🔗 Live Deployment(MAIN): https://wash-rfp-frontend.vercel.app
+
 ## 🏗️ Core Architecture & Services
 
 The server is built with FastAPI to enable low-latency, asynchronous operations, managing heavy AI processes and state broadcasts smoothly using Python’s native asyncio loop.
@@ -36,6 +38,16 @@ Features an algorithmic fallback generator. When a region outside the database i
 Built on a lightweight native WebSocket connection manager that keeps track of active, open communication channels grouped by dynamic room IDs.
 
 Broadcasts user state adjustments across all socket endpoints in a room concurrently within microseconds, maintaining visual synchronization without database overhead.
+
+## Automated PDF Generation Pipeline: 
+
+Integrates pdfkit and wkhtmltopdf to transition from client-side print-dialog exports to native, server-side generated corporate PDF documentation.
+
+## AI-Driven Matrix Intelligence: 
+
+Added POST /api/generate-logframe endpoint. This utilizes Gemini 2.5 Flash to dynamically synthesize RFP metadata into a standard 4-tier Logical Framework (Goal, Outcome, Output, Activity), and complete with verifiable OVI indicators. 
+Also, refines the RFP parsing prompt to enforce strict extraction of primary_country metadata for cleaner GIS spatial indexing.
+Pipeline Data Flow: RFP data is passed between modules via the global React Router state object, allowing for seamless transition from data ingestion (/rfp-parser) to strategic matrix generation (/logframe).
 
 ## 💻 System Requirements
 
@@ -120,7 +132,7 @@ The application will launch on http://localhost:8000. You can access the auto-ge
 
 ## 🛠️ Windows Troubleshooting: PDF Generation & GTK3 Setup
 
-If you are running the backend on a Windows machine and encounter compilation errors related to OS libraries (such as those required by PDF compilers like WeasyPrint), you must install the missing system dependencies.
+1. GTK3 SETUP: If you are running the backend on a Windows machine and encounter compilation errors related to OS libraries (such as those required by PDF compilers like WeasyPrint), you must install the missing system dependencies.
 
 Download the unified package gtk3-runtime-3.24.31-2022-01-04-ts-win64 (or a newer stable release of the GTK3 runtime for Windows).
 
@@ -129,6 +141,48 @@ Run the installer and proceed with all options left at DEFAULT.
 Ensure the checkbox for "Set to PATH environment variable" is enabled during the wizard.
 
 Restart your terminal window and restart your virtual environment. This will automatically link the system libraries to your execution path, fully resolving WeasyPrint rendering and compilation errors on Windows.
+
+2. WINDOWS USERS ONLY: The PDF compiler in LogFrame Matrix window requires (wkhtmltopdf) installed on the host server. Ensure the binary path is included in the system environment PATH variables. Download from: https://wkhtmltopdf.org/downloads/
+
+
+run
+```bash
+.\venv\Scripts\Activate.ps1
+```
+for a refresh and then 
+
+run 
+```bash
+uvicorn main:app --reload
+```
+
+Also, try this command to install the package successfully
+
+```bash
+pip install pdfkit
+```
+
+if you encounter any error after running these commands because you worked in a global environemt previously,
+try doing a clean install of all your packages in requirements.txt, so your system can detect can install pdfkit.
+
+run 
+```bash
+pip install -r requirements.txt
+```
+
+Check to verify installed packages:
+
+```bash
+type requirements.txt
+```
+then save your packages with :
+
+```bash
+pip freeze > requirements.txt
+```
+## NOTE: 
+MAKE SURE THE REQUIREMENTS.TXT FILE IS NOT EMPTY. YOR BACKEND SERVER OR PROJECT NEEDS EVERY PACKAGE IN IT TO RUN THE APP SUCCESSFULLY
+
 
 ## 📡 Backend API Reference
 
@@ -153,7 +207,8 @@ OpenWsh-Control/
 │   ├── main.py                 # Core API routing, socket states, and AI prompts
 │   ├── requirements.txt        # Backend dependencies list
 │   ├── .env                    # System secrets (ignored by Git)
-│   └── .gitignore              # Environment configuration template
+│   ├── venv/                   # Environemt configuration 
+│   └── .gitignore              # Root system ignoring patterns
 ├── wash-rfp-frontend/          # Front-End Web Client
 │   ├── src/
 │   │   ├── components/
@@ -161,12 +216,13 @@ OpenWsh-Control/
 │   │   ├── App.tsx
 │   │   └── main.tsx
 │   └── package.json
-├── .gitignore                  # Root system ignoring patterns
+├── .gitignore                 
 └── README.md
 ```
 
 
-⚠️ Important Security Note: Ensure that your local .env configuration file is explicitly registered inside your .gitignore file. Never commit sensitive environment configurations, server keys, or API credentials to public code repositories. Only commit configuration templates like .env.example.
+## ⚠️ Important Security Note: 
+Ensure that your local .env configuration file is explicitly registered inside your .gitignore file. Never commit sensitive environment configurations, server keys, or API credentials to public code repositories. Only commit configuration templates like .env.example.
 
 
 ## 📄 License & Authors
