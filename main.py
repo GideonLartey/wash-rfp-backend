@@ -17,12 +17,12 @@ client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 app = FastAPI()
 
-# --- 1. CORE APP METADATA & ALIVE CHECK ---
+# CORE APP METADATA & ALIVE CHECK ---
 @app.get("/")
 async def root():
     return {"status": "online", "message": "OpenWSH Extraction API is running."}
 
-# --- 2. SECURITY & CORS CONFIGURATION ---
+# --- SECURITY & CORS CONFIGURATION ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -31,7 +31,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- 3. LIVE DATA API ENRICHMENT ENGINE ---
+# --- LIVE DATA API ENRICHMENT ENGINE ---
 class CountryContext(BaseModel):
     country: str
     water_stress_index: float
@@ -69,7 +69,7 @@ async def get_live_country_context(country_name: str):
         infrastructure_baseline=random.randint(40, 75)
     )
 
-# --- 4. REAL-TIME COLLABORATION MULTIPLAYER HUB ---
+# --- REAL-TIME COLLABORATION MULTIPLAYER HUB ---
 class ConnectionManager:
     def __init__(self):
         self.active_connections: Dict[str, List[WebSocket]] = {}
@@ -107,7 +107,7 @@ async def websocket_endpoint(websocket: WebSocket, workspace_id: str):
     except WebSocketDisconnect:
         manager.disconnect(websocket, workspace_id)
 
-# --- 5. INTELLIGENT AI EXTRACTION ENDPOINT ---
+# --- INTELLIGENT AI EXTRACTION ENDPOINT ---
 @app.post("/api/parse-rfp")
 async def parse_rfp(file: UploadFile = File(...)):
     try:
@@ -151,7 +151,7 @@ async def parse_rfp(file: UploadFile = File(...)):
         print(f"Extraction Error: {e}")
         raise HTTPException(status_code=500, detail="Document processing failed")
 
-# --- 6. SERVER-SIDE LOGFRAME PDF COMPILER ---
+# --- SERVER-SIDE LOGFRAME PDF COMPILER ---
 class LogFrameRequest(BaseModel):
     rfpData: dict
 
@@ -160,7 +160,7 @@ async def generate_logframe_pdf_endpoint(payload: LogFrameRequest):
     try:
         data = payload.rfpData
         
-        # 1. The AI Prompt
+        # AI Prompt
         prompt = f"""
         Act as a Senior Technical Director for an international WASH NGO.
         Based on the following extracted project parameters, generate a highly professional, 
@@ -189,7 +189,7 @@ async def generate_logframe_pdf_endpoint(payload: LogFrameRequest):
         
         matrix_data = json.loads(response.text)
 
-        # 2. Convert JSON into Corporate HTML structure
+        # Convert JSON into Corporate HTML structure
         html_rows = ""
         for i, row in enumerate(matrix_data):
             bg_class = "row-bg" if i % 2 != 0 else ""
@@ -255,10 +255,10 @@ async def generate_logframe_pdf_endpoint(payload: LogFrameRequest):
         </html>
         """
 
-        # 3. Render PDF natively and force browser download
+        # Render PDF natively and force browser download
         temp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
         
-        # Note: If wkhtmltopdf is not in your system PATH, you may need to specify its path to pdfkit.
+        # specify path to pdfkit.
         pdfkit.from_string(html_content, temp_pdf.name)
 
         return FileResponse(

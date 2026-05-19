@@ -9,3 +9,12 @@ ENV/
 
 # OS Generated Files
 .DS_Store
+
+# Python bytecode 
+*.pyc
+*.pyo
+*.pyd
+
+# Temporary files 
+*.tmp
+*.temp

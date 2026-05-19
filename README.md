@@ -45,8 +45,8 @@ Integrates pdfkit and wkhtmltopdf to transition from client-side print-dialog ex
 
 ## AI-Driven Matrix Intelligence: 
 
-Added POST /api/generate-logframe endpoint. This utilizes Gemini 2.5 Flash to dynamically synthesize RFP metadata into a standard 4-tier Logical Framework (Goal, Outcome, Output, Activity), and complete with verifiable OVI indicators. 
-Also, refines the RFP parsing prompt to enforce strict extraction of primary_country metadata for cleaner GIS spatial indexing.
+Added POST /api/generate-logframe endpoint. This utilizes Gemini 2.5 Flash to dynamically synthesize RFP metadata into a standard 4-tier Logical Framework (Goal, Outcome, Output, Activity)-complete with verifiable OVI indicators. 
+
 Pipeline Data Flow: RFP data is passed between modules via the global React Router state object, allowing for seamless transition from data ingestion (/rfp-parser) to strategic matrix generation (/logframe).
 
 ## 💻 System Requirements
@@ -71,7 +71,6 @@ git clone
 ```bash
 https://github.com/DeonLondn/wash-rfp-backend.git
 ```
-
 
 
 2. Configure Your Virtual Environment
@@ -130,6 +129,8 @@ uvicorn main:app --reload
 ## NOTE:
 The application will launch on http://localhost:8000. You can access the auto-generated Swagger documentation at http://localhost:8000/docs to test endpoints interactively.
 
+
+
 ## 🛠️ Windows Troubleshooting: PDF Generation & GTK3 Setup
 
 1. GTK3 SETUP: If you are running the backend on a Windows machine and encounter compilation errors related to OS libraries (such as those required by PDF compilers like WeasyPrint), you must install the missing system dependencies.
@@ -187,15 +188,18 @@ MAKE SURE THE REQUIREMENTS.TXT FILE IS NOT EMPTY. YOR BACKEND SERVER OR PROJECT 
 ## 📡 Backend API Reference
 
 ```bash
-Endpoint Route           HTTP Method   Data Protocol     Operational Function & Execution Context
+Endpoint Route           HTTP Method   Data Protocol        Operational Function & Execution Context
                        
-/                        GET           HTTP              Validates runtime availability  and reverse proxy status.
+/                        GET           HTTP                 Validates runtime availability and reverse proxy status.
                        
-/api/parse-rfp           POST          HTTP(Multipart)   Accepts a raw PDF multipart upload. Runs async AI extraction 
+/api/parse-rfp           POST          HTTP(Multipart)      Accepts a raw PDF multipart upload. Runs async AI extraction 
 
-/api/context/{country}   GET           HTTP              Returns baseline telemetry. Falls back to calculation loops for unindexed countries.
+/api/context/{country}   GET           HTTP                 Returns baseline telemetry. Falls back to calculation loops
 
-/ws/collaborate/{id}      WS           WebSocket         Establishes bidirectional streaming socket connection 
+/ws/collaborate/{id}     WS            WebSocket               Establishes bidirectional streaming socket connection 
+
+/api/generate-logframe   POST          JSON (Application/JSON)  Server-side synthesis and compilation of project  
+
 ```
 
 
@@ -203,13 +207,13 @@ Endpoint Route           HTTP Method   Data Protocol     Operational Function & 
 
 ```bash
 OpenWsh-Control/
-├── wash-rfp-backend/
+├── backend/
 │   ├── main.py                 # Core API routing, socket states, and AI prompts
 │   ├── requirements.txt        # Backend dependencies list
-│   ├── .env                    # System secrets (ignored by Git)
+│   ├── .env.example            # System secrets (ignored by Git)
 │   ├── venv/                   # Environemt configuration 
 │   └── .gitignore              # Root system ignoring patterns
-├── wash-rfp-frontend/          # Front-End Web Client
+├── frontend/          
 │   ├── src/
 │   │   ├── components/
 │   │   ├── pages/
