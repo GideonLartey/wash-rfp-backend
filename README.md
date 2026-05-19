@@ -55,7 +55,11 @@ OpenWSH-CONTROL is structured with a decoupled codebase. For clean organization,
 
 Download the backend server repository onto your local system:
 
-git clone https://github.com/DeonLondn/wash-rfp-backend.git
+git clone
+```bash
+https://github.com/DeonLondn/wash-rfp-backend.git
+```
+
 
 
 2. Configure Your Virtual Environment
@@ -122,48 +126,22 @@ Restart your terminal window and restart your virtual environment. This will aut
 
 ## 📡 Backend API Reference
 
-Endpoint Route
+```bash
+Endpoint Route           HTTP Method   Data Protocol     Operational Function & Execution Context
+                       
+/                        GET           HTTP              Validates runtime availability  and reverse proxy status.
+                       
+/api/parse-rfp           POST          HTTP(Multipart)   Accepts a raw PDF multipart upload. Runs async AI extraction 
 
-HTTP Method
+/api/context/{country}   GET           HTTP              Returns baseline telemetry. Falls back to calculation loops for unindexed countries.
 
-Data Protocol
+/ws/collaborate/{id}      WS           WebSocket         Establishes bidirectional streaming socket connection 
+```
 
-Operational Function & Execution Context
-
-/
-
-GET
-
-HTTP
-
-Core health check. Validates runtime availability and reverse proxy status.
-
-/api/parse-rfp
-
-POST
-
-HTTP (Multipart)
-
-Accepts a raw PDF multipart upload. Runs async AI extraction and returns normalized metadata.
-
-/api/context/{country}
-
-GET
-
-HTTP
-
-Returns baseline telemetry. Falls back to calculation loops for unindexed countries.
-
-/ws/collaborate/{id}
-
-WS
-
-WebSocket
-
-Establishes a long-lived bidirectional streaming socket connection for active workspace syncing.
 
 📂 Project Structure
 
+```bash
 OpenWsh-Control/
 ├── wash-rfp-backend/
 │   ├── main.py                 # Core API routing, socket states, and AI prompts
@@ -179,6 +157,7 @@ OpenWsh-Control/
 │   └── package.json
 ├── .gitignore                  # Root system ignoring patterns
 └── README.md
+```
 
 
 ⚠️ Important Security Note: Ensure that your local .env configuration file is explicitly registered inside your .gitignore file. Never commit sensitive environment configurations, server keys, or API credentials to public code repositories. Only commit configuration templates like .env.example.
