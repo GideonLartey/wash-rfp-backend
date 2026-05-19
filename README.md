@@ -5,7 +5,7 @@
 
 
 
-## OpenWSH-CONTROL Core API & AI Engine ⚙️
+## OpenWSH-CONTROL Core Backend API & AI Engine ⚙️
 
 The asynchronous, high-speed Python backend engine powering the OpenWSH-CONTROL initiative. This system provides technical teams, directors, and field offices with automated RFP document parsing, localized water stress baseline enrichment, and an active multi-user WebSocket server for collaborative system modeling.
 
@@ -72,6 +72,7 @@ python -m venv venv
 
 ## Activate the environment based on your current operating system:
 
+```bash
 macOS / Linux:
 
 source venv/bin/activate
@@ -85,13 +86,16 @@ venv\Scripts\activate.bat
 Windows (PowerShell):
 
 .\venv\Scripts\Activate.ps1
+```
 
 
 3. Install Required Dependencies
 
 Once your virtual environment is active, install the required packages:
 
+```bash
 pip install -r requirements.txt
+```
 
 
 4. Configure Environment Variables
@@ -107,9 +111,11 @@ I  used (GOOGLE_API_KEY=your_gemini_api_key_here); you can select any LLM key of
 
 Run the local server using the high-performance ASGI web server, Uvicorn:
 
+```bash
 uvicorn main:app --reload
+```
 
-
+## NOTE:
 The application will launch on http://localhost:8000. You can access the auto-generated Swagger documentation at http://localhost:8000/docs to test endpoints interactively.
 
 ## 🛠️ Windows Troubleshooting: PDF Generation & GTK3 Setup
