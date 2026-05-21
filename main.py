@@ -3,7 +3,7 @@ import json
 import random
 import tempfile
 import pdfkit
-from fastapi import FastAPI, UploadFile, File, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, UploadFile, File, HTTPException, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -11,15 +11,24 @@ from google import genai
 from google.genai import types
 from pydantic import BaseModel
 from typing import List, Dict
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 app = FastAPI()
 
+# --- RATE LIMITER CONFIGURATION ---
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # CORE APP METADATA & ALIVE CHECK ---
 @app.get("/")
-async def root():
+@limiter.limit("10/minute")
+async def root(request: Request):
     return {"status": "online", "message": "OpenWSH Extraction API is running."}
 
 # --- SECURITY & CORS CONFIGURATION ---
@@ -40,7 +49,8 @@ class CountryContext(BaseModel):
     infrastructure_baseline: int
 
 @app.get("/api/context/{country_name}", response_model=CountryContext)
-async def get_live_country_context(country_name: str):
+@limiter.limit("20/minute")
+async def get_live_country_context(request: Request, country_name: str):
     target = country_name.lower().strip()
     
     db = {
@@ -109,7 +119,8 @@ async def websocket_endpoint(websocket: WebSocket, workspace_id: str):
 
 # --- INTELLIGENT AI EXTRACTION ENDPOINT ---
 @app.post("/api/parse-rfp")
-async def parse_rfp(file: UploadFile = File(...)):
+@limiter.limit("5/minute")
+async def parse_rfp(request: Request, file: UploadFile = File(...)):
     try:
         pdf_content = await file.read()
 
@@ -156,7 +167,8 @@ class LogFrameRequest(BaseModel):
     rfpData: dict
 
 @app.post("/api/generate-logframe")
-async def generate_logframe_pdf_endpoint(payload: LogFrameRequest):
+@limiter.limit("5/minute")
+async def generate_logframe_pdf_endpoint(request: Request, payload: LogFrameRequest):
     try:
         data = payload.rfpData
         
