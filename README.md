@@ -69,7 +69,7 @@ Download the backend server repository onto your local system:
 
 git clone
 ```bash
-https://github.com/DeonLondn/wash-rfp-backend.git
+https://github.com/GideonLartey/wash-rfp-backend.git
 
 Duplicate the example environment file:
 cp .env.example .env
