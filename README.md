@@ -1,15 +1,21 @@
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)]()
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)]()
-[![Gemini](https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)]()
+
+
+<p align="center">
+  <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" />
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" />
+</p>
+
+
+
 
 
 
 ## OpenWSH-CONTROL Core Backend API & AI Engine ⚙️
 
-The asynchronous, high-speed Python backend engine powering the OpenWSH-CONTROL initiative. This system provides technical teams, directors, and field offices with automated RFP document parsing, localized water stress baseline enrichment, and an active multi-user WebSocket server for collaborative system modeling.
-
-🔗 Live API Gateway: https://wash-ai.onrender.com (or your deployed API gateway URL)
+This asynchronous, high-speed Python backend engine powering the OpenWSH-CONTROL initiative. This system provides technical teams, directors, and field offices with automated RFP document parsing, localized water stress baseline enrichment, and an active multi-user WebSocket server for collaborative system modeling.
 
 🔗 Live Deployment(MAIN): https://wash-rfp-frontend.vercel.app
 
@@ -129,9 +135,6 @@ Run the local server using the high-performance ASGI web server, Uvicorn:
 uvicorn main:app --reload
 ```
 
-## NOTE:
-The application will launch on http://localhost:8000. You can access the auto-generated Swagger documentation at http://localhost:8000/docs to test endpoints interactively.
-
 
 
 ## 🛠️ Windows Troubleshooting: PDF Generation & GTK3 Setup
@@ -191,7 +194,7 @@ MAKE SURE THE REQUIREMENTS.TXT FILE IS NOT EMPTY. YOR BACKEND SERVER OR PROJECT 
 ## 📡 Backend API Reference
 
 ```bash
-Endpoint Route           HTTP Method   Data Protocol        Operational Function & Execution Context
+Endpoint Route           HTTP Method   Data Protocol        Operational Function and Execution Context
                        
 /                        GET           HTTP                 Validates runtime availability and reverse proxy status.
                        
@@ -204,6 +207,22 @@ Endpoint Route           HTTP Method   Data Protocol        Operational Function
 /api/generate-logframe   POST          JSON (Application/JSON)  Server-side synthesis and compilation of project  
 
 ```
+
+
+## 📝AI API Usage & Cost Optimization
+
+To manage API consumption during the development and prototyping phase, the LogFrame Matrix and Climate Predictor have been heavily rate-limited. This ensures high-velocity testing of the UI/UX components without incurring unnecessary API token costs. 
+
+To prevent abuse of the system by bad actors, we implemented slowapi rate limiting(which tracks IP Addresses) in the backend(main.py) file:
+
+- **get_remote_address**: 
+This automatically identifies unique users based on their IP address.
+
+- **request: Request**: 
+The limiter needs this to read the incoming connection details.
+
+- **The "429" Error**: 
+If a user hits the button 6 times in a minute, the server won't crash or run up your AI bill. Instead, FastAPI will automatically reject the 6th request and send a clean HTTP 429 (Too Many Requests) status code back to your Next.js frontend.
 
 
 📂 Project Structure
@@ -235,8 +254,6 @@ Ensure that your local .env configuration file is explicitly registered inside y
 ## 📄 License & Authors
 
 Lead Architect: Gideon Lartey (DeonLondn)
-
-Last Code Optimization: May 2026
 
 Licensed under the terms of the open-source MIT License—see the root LICENSE file for precise details.
 
